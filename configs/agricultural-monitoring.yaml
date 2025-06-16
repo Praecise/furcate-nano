@@ -1,0 +1,41 @@
+# configs/agricultural-monitoring.yaml
+# Configuration optimized for agricultural monitoring
+device:
+  id: "agri-nano-001"
+  name: "Agricultural Monitoring Station"
+  environmental_zone: "agricultural"
+
+hardware:
+  sensors:
+    soil_moisture:
+      enabled: true
+      measurement_depth_cm: 20  # Root zone monitoring
+    
+    soil_ph:
+      enabled: true
+      type: "ph_sensor"
+      adc_channel: 2
+    
+    soil_nutrients:
+      enabled: true
+      type: "npk_sensor"
+      i2c_address: 0x64
+
+monitoring:
+  interval_seconds: 900  # 15 minutes for agriculture
+  
+  alert_thresholds:
+    soil_moisture:
+      moisture: [40, 80]  # Crop irrigation needs
+    
+    soil_ph:
+      ph: [6.0, 7.5]    # Optimal crop pH range
+    
+    temperature_humidity:
+      temperature: [5, 35]   # Crop temperature range
+      humidity: [40, 85]
+
+power:
+  # Agricultural areas often have good solar exposure
+  solar:
+    panel_watts: 40  # Larger panel for extended operation

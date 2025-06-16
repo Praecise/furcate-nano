@@ -1,0 +1,175 @@
+# configs/default-config.yaml
+# Default configuration for Furcate Nano devices
+---
+device:
+  id: "nano-rpi5-001"
+  name: "Furcate Nano Environmental Monitor"
+  location:
+    latitude: 37.7749
+    longitude: -122.4194
+    altitude: 50.0
+  environmental_zone: "urban_forest"
+
+hardware:
+  platform: "raspberry_pi_5"
+  simulation: false  # Set to true for development
+  gpio_pins:
+    dht22_data: 4
+    status_led: 25
+    lora_reset: 22
+    lora_dio0: 18
+    moisture_power: 24
+    power_monitor: 23
+  
+  sensors:
+    temperature_humidity:
+      type: "dht22"
+      pin: 4
+      enabled: true
+      calibration_offset: 0.0
+    
+    pressure_temperature:
+      type: "bmp280"
+      i2c_address: 0x76
+      enabled: true
+      sea_level_pressure: 1013.25
+    
+    air_quality:
+      type: "mq135"
+      adc_channel: 0
+      enabled: true
+      calibration_factor: 1.0
+      warmup_time_seconds: 30
+    
+    soil_moisture:
+      type: "moisture"
+      adc_channel: 1
+      power_pin: 24
+      enabled: true
+      dry_value: 3.3
+      wet_value: 1.2
+    
+    light_sensor:
+      type: "tsl2561"
+      i2c_address: 0x39
+      enabled: false
+      integration_time: "402ms"
+
+ml:
+  simulation: false
+  model_path: "/data/furcate-nano/models"
+  inference_interval_seconds: 60
+  
+  models:
+    environmental_classifier:
+      file: "environmental_classifier.tflite"
+      enabled: true
+      input_features: ["temperature", "humidity", "pressure", "air_quality"]
+      confidence_threshold: 0.7
+    
+    anomaly_detector:
+      file: "anomaly_detector.tflite"
+      enabled: true
+      anomaly_threshold: 0.8
+      window_size: 10
+
+mesh:
+  simulation: false
+  max_connections: 8
+  discovery_interval: 60
+  heartbeat_interval: 30
+  environmental_zone: "urban_forest"
+  
+  protocols:
+    lora:
+      enabled: true
+      frequency: 915  # MHz (US frequency)
+      spreading_factor: 7
+      bandwidth: 125  # kHz
+      coding_rate: 5
+      transmit_power: 14  # dBm
+      sync_word: 0x34
+      
+    bluetooth:
+      enabled: true
+      max_range_m: 100
+      device_name: "FurcateNano"
+      advertising_interval: 1000  # ms
+
+power:
+  simulation: false
+  monitoring_interval: 30  # seconds
+  
+  battery:
+    capacity_mah: 10000
+    voltage_min: 3.0
+    voltage_max: 4.2
+    voltage_nominal: 3.7
+    chemistry: "LiPo"
+  
+  solar:
+    panel_watts: 20
+    voltage_max: 6.0
+    mppt_enabled: true
+  
+  thresholds:
+    low_battery: 0.2      # 20%
+    critical_battery: 0.1  # 10%
+    emergency_battery: 0.05 # 5%
+  
+  power_modes:
+    normal:
+      cpu_frequency: "1800MHz"
+      monitoring_interval: 60
+      mesh_active: true
+    
+    balanced:
+      cpu_frequency: "1200MHz" 
+      monitoring_interval: 180
+      mesh_active: true
+    
+    low_power:
+      cpu_frequency: "600MHz"
+      monitoring_interval: 300
+      mesh_active: false
+    
+    emergency:
+      cpu_frequency: "300MHz"
+      monitoring_interval: 600
+      mesh_active: false
+
+storage:
+  data_path: "/data/furcate-nano"
+  retention_days: 30
+  use_duckdb: true    # Fast analytics queries
+  use_rocksdb: true   # High-frequency writes
+  batch_size: 50      # Write batching for performance
+  compression: true   # Enable data compression
+
+monitoring:
+  interval_seconds: 60
+  default_interval_seconds: 60
+  
+  alert_thresholds:
+    temperature_humidity:
+      temperature: [-10, 50]  # Celsius
+      humidity: [0, 100]      # %RH
+    
+    pressure_temperature:
+      pressure: [950, 1050]   # hPa
+    
+    air_quality:
+      aqi: [0, 200]          # Air Quality Index
+    
+    soil_moisture:
+      moisture: [10, 90]     # %
+
+protocol:
+  version: "1.0"
+  compression_enabled: true
+  master_nodes: []  # Will be discovered automatically
+  asset_creation_enabled: false  # Requires Furcate Pro integration
+
+# Global settings
+debug: false
+log_level: "INFO"

@@ -1,0 +1,430 @@
+# ============================================================================
+# furcate_nano/configs/integrations.yaml
+# Complete integration configuration for external systems
+# ============================================================================
+
+# Integration settings
+integrations:
+  # Enable/disable entire integration system
+  enabled: true
+  
+  # Data sharing intervals
+  sync_interval: 60  # seconds
+  batch_size: 10     # records per batch
+  
+  # Retry policy
+  max_retries: 3
+  retry_delay: 5     # seconds
+  
+  # Data filtering
+  filters:
+    min_data_quality: 0.7
+    include_ml_analysis: true
+    include_raw_sensor_data: true
+
+# ============================================================================
+# REST API CONFIGURATION
+# ============================================================================
+rest_api:
+  enabled: true
+  host: "0.0.0.0"
+  port: 8000
+  
+  # Security
+  cors_origins:
+    - "http://localhost:3000"    # React frontend
+    - "http://localhost:8080"    # Vue frontend
+    - "https://dashboard.furcate.org"
+  
+  # API Features
+  features:
+    live_streaming: true
+    data_export: true
+    sensor_calibration: true
+    diagnostics: true
+  
+  # Rate limiting
+  rate_limit:
+    requests_per_minute: 120
+    burst_size: 20
+
+# ============================================================================
+# MQTT CONFIGURATION
+# ============================================================================
+mqtt:
+  enabled: true
+  
+  # Broker settings
+  broker: "mqtt.furcate.org"
+  port: 1883
+  keepalive: 60
+  
+  # Authentication
+  username: "furcate_device"
+  password: "${FURCATE_MQTT_PASSWORD}"  # Environment variable
+  
+  # Topics
+  base_topic: "furcate/devices/${DEVICE_ID}"
+  topics:
+    sensors: "sensors"
+    alerts: "alerts"
+    status: "status"
+    commands: "commands"
+    responses: "responses"
+  
+  # Message settings
+  qos:
+    sensor_data: 1
+    alerts: 2
+    status: 1
+  
+  # Retained messages
+  retain:
+    status: true
+    alerts: false
+    sensor_data: false
+
+# ============================================================================
+# WEBHOOK CONFIGURATION
+# ============================================================================
+webhooks:
+  enabled: true
+  
+  endpoints:
+    # Environmental monitoring dashboard
+    - name: "main_dashboard"
+      url: "https://api.environmental-dashboard.com/webhook"
+      enabled: true
+      headers:
+        Authorization: "Bearer ${DASHBOARD_API_KEY}"
+        Content-Type: "application/json"
+      
+      # Data filtering for this endpoint
+      filters:
+        message_types: ["sensor_update", "environmental_alert"]
+        min_severity: "warning"
+    
+    # Research institution
+    - name: "university_research"
+      url: "https://research.university.edu/api/furcate"
+      enabled: false  # Enable when needed
+      headers:
+        X-API-Key: "${RESEARCH_API_KEY}"
+      
+      filters:
+        message_types: ["sensor_update"]
+        include_ml_analysis: true
+    
+    # Government environmental agency
+    - name: "environmental_agency"
+      url: "https://env-agency.gov/api/citizen-science"
+      enabled: true
+      headers:
+        Authorization: "Bearer ${GOV_API_TOKEN}"
+      
+      filters:
+        message_types: ["environmental_alert"]
+        min_severity: "critical"
+  
+  # Retry configuration
+  max_retries: 3
+  retry_delay: 5
+  timeout: 30
+
+# ============================================================================
+# WEBSOCKET CONFIGURATION
+# ============================================================================
+websocket:
+  enabled: true
+  host: "0.0.0.0"
+  port: 8765
+  
+  # Real-time streaming
+  streaming:
+    interval: 5  # seconds
+    max_clients: 50
+    
+  # Data compression
+  compression: true
+  
+  # Authentication
+  require_auth: false
+  auth_token: "${WS_AUTH_TOKEN}"
+
+# ============================================================================
+# CLOUD PLATFORM INTEGRATIONS
+# ============================================================================
+
+# AWS IoT Core
+aws_iot:
+  enabled: false  # Enable when AWS credentials are configured
+  
+  # Device settings
+  thing_name: "${DEVICE_ID}"
+  region: "us-west-2"
+  
+  # Certificates (paths to certificate files)
+  certificates:
+    root_ca: "/data/certs/aws-root-ca.pem"
+    device_cert: "/data/certs/device-cert.pem"
+    private_key: "/data/certs/private-key.pem"
+  
+  # Topics
+  topics:
+    telemetry: "furcate/telemetry/${DEVICE_ID}"
+    alerts: "furcate/alerts/${DEVICE_ID}"
+    shadow: "$aws/thing/${DEVICE_ID}/shadow"
+  
+  # Features
+  features:
+    device_shadow: true
+    fleet_indexing: true
+    jobs: true
+
+# Azure IoT Hub
+azure_iot:
+  enabled: false  # Enable when Azure is configured
+  
+  # Connection
+  connection_string: "${AZURE_IOT_CONNECTION_STRING}"
+  device_id: "${DEVICE_ID}"
+  
+  # Features
+  features:
+    device_twin: true
+    direct_methods: true
+    file_upload: false
+  
+  # Message routing
+  routing:
+    telemetry_route: "telemetry"
+    alerts_route: "alerts"
+
+# Google Cloud IoT
+google_iot:
+  enabled: false  # Enable when GCP is configured
+  
+  project_id: "${GCP_PROJECT_ID}"
+  region: "us-central1"
+  registry_id: "furcate-devices"
+  device_id: "${DEVICE_ID}"
+  
+  # Authentication
+  private_key_file: "/data/certs/gcp-private-key.pem"
+
+# ============================================================================
+# TIME-SERIES DATABASE INTEGRATIONS
+# ============================================================================
+
+# InfluxDB
+influxdb:
+  enabled: false  # Enable when InfluxDB is available
+  
+  # Connection
+  url: "http://influxdb.local:8086"
+  token: "${INFLUXDB_TOKEN}"
+  org: "furcate"
+  bucket: "environmental_data"
+  
+  # Data retention
+  retention_policy: "30d"
+  
+  # Measurement names
+  measurements:
+    sensors: "sensor_readings"
+    ml_analysis: "ml_predictions"
+    alerts: "environmental_alerts"
+    system: "system_metrics"
+  
+  # Batch settings
+  batch_size: 50
+  flush_interval: 10  # seconds
+
+# Prometheus
+prometheus:
+  enabled: true
+  
+  # Metrics endpoint
+  metrics_port: 9090
+  metrics_path: "/metrics"
+  
+  # Metric definitions
+  metrics:
+    - name: "furcate_sensor_value"
+      type: "gauge"
+      description: "Current sensor readings"
+      labels: ["device_id", "sensor_name", "sensor_type"]
+    
+    - name: "furcate_ml_anomaly_score"
+      type: "gauge"
+      description: "ML anomaly detection score"
+      labels: ["device_id"]
+    
+    - name: "furcate_alerts_total"
+      type: "counter"
+      description: "Total environmental alerts"
+      labels: ["device_id", "severity", "sensor_name"]
+    
+    - name: "furcate_power_battery_level"
+      type: "gauge"
+      description: "Battery level percentage"
+      labels: ["device_id"]
+    
+    - name: "furcate_mesh_peers"
+      type: "gauge"
+      description: "Number of mesh network peers"
+      labels: ["device_id"]
+
+# ============================================================================
+# DATA PROCESSING & TRANSFORMATION
+# ============================================================================
+data_processing:
+  # Data validation
+  validation:
+    enabled: true
+    rules:
+      - field: "temperature"
+        min: -50
+        max: 70
+      - field: "humidity"
+        min: 0
+        max: 100
+      - field: "aqi"
+        min: 0
+        max: 500
+  
+  # Data transformation
+  transformation:
+    enabled: true
+    
+    # Unit conversions
+    conversions:
+      temperature:
+        from: "celsius"
+        to: "fahrenheit"  # Optional conversion
+      
+    # Data aggregation
+    aggregation:
+      enabled: true
+      window_size: 300  # 5 minutes
+      functions: ["avg", "min", "max", "stddev"]
+  
+  # Data enrichment
+  enrichment:
+    enabled: true
+    add_location: true
+    add_weather_context: false  # Requires weather API
+    add_device_metadata: true
+
+# ============================================================================
+# SECURITY & AUTHENTICATION
+# ============================================================================
+security:
+  # API Authentication
+  api_auth:
+    enabled: true
+    method: "bearer_token"  # Options: bearer_token, api_key, basic_auth
+    token: "${FURCATE_API_TOKEN}"
+  
+  # Data encryption
+  encryption:
+    enabled: true
+    algorithm: "AES-256-GCM"
+    key_rotation_days: 90
+  
+  # Rate limiting
+  rate_limiting:
+    enabled: true
+    per_minute: 100
+    per_hour: 1000
+    per_day: 10000
+  
+  # IP filtering
+  ip_filtering:
+    enabled: false
+    whitelist: []
+    blacklist: []
+
+# ============================================================================
+# MONITORING & ALERTING
+# ============================================================================
+monitoring:
+  # Integration health monitoring
+  health_checks:
+    enabled: true
+    interval: 300  # 5 minutes
+    timeout: 30
+    
+    endpoints:
+      - name: "mqtt_broker"
+        type: "tcp"
+        host: "mqtt.furcate.org"
+        port: 1883
+      
+      - name: "webhook_primary"
+        type: "http"
+        url: "https://api.environmental-dashboard.com/health"
+        expected_status: 200
+  
+  # Performance monitoring
+  performance:
+    track_latency: true
+    track_throughput: true
+    track_error_rates: true
+    
+    # Alerts
+    alerts:
+      high_latency_ms: 1000
+      low_throughput_per_min: 10
+      high_error_rate_percent: 5
+
+# ============================================================================
+# BACKUP & DISASTER RECOVERY
+# ============================================================================
+backup:
+  # Configuration backup
+  config_backup:
+    enabled: true
+    interval_hours: 24
+    retention_days: 30
+    location: "/data/backups/config"
+  
+  # Data backup
+  data_backup:
+    enabled: true
+    interval_hours: 6
+    retention_days: 7
+    location: "/data/backups/data"
+    compress: true
+  
+  # Remote backup
+  remote_backup:
+    enabled: false
+    provider: "s3"  # Options: s3, azure_blob, gcs
+    bucket: "furcate-backups"
+    encryption: true
+
+# ============================================================================
+# DEVELOPMENT & TESTING
+# ============================================================================
+development:
+  # Test mode
+  test_mode: false
+  
+  # Mock integrations
+  mock_integrations:
+    enabled: false
+    simulate_failures: false
+    failure_rate: 0.05  # 5% failure rate
+  
+  # Debug settings
+  debug:
+    log_all_requests: false
+    log_payloads: false
+    detailed_errors: true
+  
+  # Local development
+  local_dev:
+    enabled: false
+    disable_auth: true
+    cors_allow_all: true

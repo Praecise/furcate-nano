@@ -1,0 +1,41 @@
+# configs/urban-monitoring.yaml
+# Configuration optimized for urban environmental monitoring
+device:
+  id: "urban-nano-001"
+  name: "Urban Air Quality Monitor"
+  environmental_zone: "urban_center"
+
+hardware:
+  sensors:
+    air_quality:
+      enabled: true
+      calibration_factor: 1.2  # Urban pollution adjustment
+    
+    sound_level:
+      enabled: true  # Urban noise monitoring
+      type: "microphone"
+      adc_channel: 3
+    
+    particulate_matter:
+      enabled: true
+      type: "pms5003"
+      uart_port: "/dev/ttyUSB0"
+
+monitoring:
+  interval_seconds: 180  # 3 minutes for urban monitoring
+  
+  alert_thresholds:
+    air_quality:
+      aqi: [0, 150]  # Stricter urban air quality
+    
+    sound_level:
+      decibels: [40, 85]  # Urban noise levels
+    
+    particulate_matter:
+      pm25: [0, 35]   # μg/m³
+      pm10: [0, 50]   # μg/m³
+
+mesh:
+  # Urban deployments have more devices
+  max_connections: 12
+  discovery_interval: 30  # More frequent discovery

@@ -1,0 +1,69 @@
+# docker/docker-compose.yml
+# Docker Compose for Furcate Nano development environment
+version: '3.8'
+
+services:
+  nano-device-1:
+    build: .
+    container_name: furcate-nano-1
+    environment:
+      - FURCATE_DEVICE_ID=nano-docker-001
+      - FURCATE_SIMULATION=true
+    volumes:
+      - ./configs/forest-monitoring.yaml:/app/config.yaml
+      - nano-1-data:/data
+    ports:
+      - "8080:8080"
+    networks:
+      - furcate-mesh
+
+  nano-device-2:
+    build: .
+    container_name: furcate-nano-2
+    environment:
+      - FURCATE_DEVICE_ID=nano-docker-002
+      - FURCATE_SIMULATION=true
+    volumes:
+      - ./configs/urban-monitoring.yaml:/app/config.yaml
+      - nano-2-data:/data
+    ports:
+      - "8081:8080"
+    networks:
+      - furcate-mesh
+
+  nano-device-3:
+    build: .
+    container_name: furcate-nano-3
+    environment:
+      - FURCATE_DEVICE_ID=nano-docker-003
+      - FURCATE_SIMULATION=true
+    volumes:
+      - ./configs/agricultural-monitoring.yaml:/app/config.yaml
+      - nano-3-data:/data
+    ports:
+      - "8082:8080"
+    networks:
+      - furcate-mesh
+
+  # Monitoring dashboard (optional)
+  dashboard:
+    image: grafana/grafana:latest
+    container_name: furcate-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=furcate123
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - furcate-mesh
+
+volumes:
+  nano-1-data:
+  nano-2-data:
+  nano-3-data:
+  grafana-data:
+
+networks:
+  furcate-mesh:
+    driver: bridge

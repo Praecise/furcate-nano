@@ -1,0 +1,137 @@
+# ============================================================================
+# pyproject.toml - Modern Python packaging for Furcate Nano
+# ============================================================================
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "furcate-nano"
+version = "1.0.0"
+description = "Open Source Environmental Edge Computing Framework"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Furcate Team", email = "opensource@furcate.org"}
+]
+maintainers = [
+    {name = "Furcate Team", email = "opensource@furcate.org"}
+]
+keywords = [
+    "environmental-monitoring", 
+    "edge-computing", 
+    "raspberry-pi", 
+    "mesh-networking",
+    "machine-learning",
+    "iot",
+    "environmental-ai"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Environmental Science",
+    "Topic :: System :: Hardware",
+    "Topic :: System :: Networking",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: POSIX :: Linux",
+    "Environment :: No Input/Output (Daemon)"
+]
+requires-python = ">=3.8"
+dependencies = [
+    "pydantic>=1.8.0",
+    "pyyaml>=6.0",
+    "asyncio-mqtt>=0.11.0",
+    "aiofiles>=0.8.0",
+    "click>=8.0.0",
+    "rich>=12.0.0",
+    "psutil>=5.8.0",
+    "numpy>=1.21.0,<1.24.0",
+    "aiohttp>=3.8.0",
+    "websockets>=10.0"
+]
+
+[project.optional-dependencies]
+hardware = [
+    "RPi.GPIO>=0.7.0",
+    "gpiozero>=1.6.0", 
+    "adafruit-circuitpython-dht>=3.7.0",
+    "adafruit-circuitpython-bmp280>=3.2.0",
+    "adafruit-circuitpython-ads1x15>=2.2.0",
+    "pyserial>=3.5",
+    "paho-mqtt>=1.6.0",
+    "bleak>=0.19.0"
+]
+ml = [
+    "tensorflow-lite>=2.10.0",
+    "scikit-learn>=1.0.0"
+]
+storage = [
+    "duckdb>=0.8.0",
+    "python-rocksdb>=0.8.0"
+]
+dev = [
+    "pytest>=6.0",
+    "pytest-asyncio>=0.18.0",
+    "pytest-cov>=3.0.0",
+    "black>=22.0",
+    "flake8>=4.0",
+    "mypy>=0.950",
+    "pre-commit>=2.15.0"
+]
+full = [
+    "furcate-nano[hardware,ml,storage]"
+]
+
+[project.urls]
+Homepage = "https://github.com/furcate-team/furcate-nano"
+Documentation = "https://docs.furcate-nano.org"
+Repository = "https://github.com/furcate-team/furcate-nano"
+Issues = "https://github.com/furcate-team/furcate-nano/issues"
+Changelog = "https://github.com/furcate-team/furcate-nano/blob/main/CHANGELOG.md"
+Community = "https://discord.gg/furcate-nano"
+
+[project.scripts]
+furcate-nano = "furcate_nano.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["furcate_nano*"]
+
+[tool.setuptools.package-data]
+furcate_nano = ["configs/*.yaml", "models/*.tflite", "scripts/*.sh"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --strict-markers"
+testpaths = ["tests"]
+asyncio_mode = "auto"

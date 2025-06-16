@@ -1,0 +1,45 @@
+# configs/forest-monitoring.yaml
+# Configuration optimized for forest environmental monitoring
+device:
+  id: "forest-nano-001"
+  name: "Forest Monitoring Station"
+  environmental_zone: "temperate_forest"
+
+hardware:
+  sensors:
+    temperature_humidity:
+      enabled: true
+      calibration_offset: -0.5  # Forest microclimate adjustment
+    
+    soil_moisture:
+      enabled: true
+      measurement_depth_cm: 15
+    
+    light_sensor:
+      enabled: true  # Important for forest canopy analysis
+    
+    sound_level:
+      enabled: true  # Wildlife activity monitoring
+      type: "microphone"
+      adc_channel: 3
+
+monitoring:
+  interval_seconds: 300  # 5 minutes for forest monitoring
+  
+  alert_thresholds:
+    temperature_humidity:
+      temperature: [-20, 40]  # Extended range for forest
+      humidity: [20, 95]
+    
+    soil_moisture:
+      moisture: [30, 80]  # Forest soil requirements
+    
+    sound_level:
+      decibels: [30, 90]  # Wildlife activity range
+
+power:
+  # Forest deployment often has limited solar exposure
+  thresholds:
+    low_battery: 0.3      # More conservative for forest
+    critical_battery: 0.15
+    emergency_battery: 0.08
