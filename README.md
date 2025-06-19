@@ -1,4 +1,4 @@
-# Furcate Nano 2025
+# Furcate Nano
 
 Open Source Environmental Edge Computing Framework
 
@@ -11,7 +11,7 @@ Open Source Environmental Edge Computing Framework
 
 ## Overview
 
-Furcate Nano is a next-generation environmental monitoring framework designed for both educational and research applications. Choose between cost-effective Raspberry Pi 5 (TensorFlow Lite) or high-performance NVIDIA Jetson Orin Nano (PyTorch) based on your specific needs.
+Furcate Nano is the open source implementations of the Furcate environmental monitoring framework designed for both educational and research applications. Choose between cost-effective Raspberry Pi 5 (TensorFlow Lite) or high-performance NVIDIA Jetson Orin Nano (PyTorch) based on your specific needs.
 
 **Key Features:**
 - **Dual AI Platforms**: Raspberry Pi 5 (TensorFlow Lite) + Jetson Orin Nano (PyTorch)
@@ -147,7 +147,7 @@ furcate-nano start --simulation
 
 ### Raspberry Pi 5 (TensorFlow Lite 2.19)
 
-**2025 Optimizations:**
+**Optimizations:**
 - **RP1 I/O Controller**: Enhanced GPIO with hardware debouncing
 - **TensorFlow Lite 2.19**: Latest ARM64 optimizations for 4x faster inference
 - **Python 3.11**: Raspberry Pi OS Bookworm default (can upgrade to 3.12)
@@ -184,7 +184,7 @@ async def process_sensors():
 
 ### NVIDIA Jetson Orin Nano (PyTorch 2.5)
 
-**2025 Optimizations:**
+**Optimizations:**
 - **CUDA 12.6**: Latest CUDA with Ampere GPU optimizations
 - **PyTorch 2.5**: NVIDIA optimized wheel with full GPU acceleration
 - **Python 3.10**: JetPack 6.2 default with modern language features
@@ -244,7 +244,7 @@ async def process_sensors():
 
 ## Version Compatibility Matrix
 
-### Python Version Support (2025)
+### Python Version Support
 
 | Python Version | Pi 5 Support | Jetson Support | Framework Support | Notes |
 |----------------|--------------|----------------|-------------------|-------|
@@ -262,7 +262,7 @@ async def process_sensors():
 | **Jetson Orin Nano** | ❌ | 2.5.0+ | NVIDIA wheel (see setup) |
 | **Development** | 2.19.0 | 2.3.0+ | Standard pip install |
 
-### Key Package Versions (Updated for 2025)
+### Key Package Versions
 
 ```python
 # Core framework versions
@@ -273,7 +273,7 @@ aiohttp = "3.9.0+"           # Async HTTP client
 websockets = "12.0+"         # WebSocket support
 
 # Hardware libraries
-adafruit-circuitpython-* = "Latest 2025 releases"
+adafruit-circuitpython-* = "Latest releases"
 RPi.GPIO = "0.7.1+"          # Raspberry Pi GPIO control
 gpiozero = "2.0+"            # Simplified GPIO interface
 
@@ -447,22 +447,6 @@ nvcc --version
 # Install missing components
 sudo apt install nvidia-jetpack
 ```
-
-## Performance Benchmarks (2025 Updated)
-
-### Real-World Performance Tests
-
-| Test | Raspberry Pi 5 | Jetson Orin Nano | Jetson Orin Nano Super |
-|------|----------------|-------------------|-------------------------|
-| **TensorFlow Lite Inference** | 65-85 FPS | 35-50 FPS | 150+ FPS |
-| **PyTorch Inference (FP32)** | N/A | 120-180 FPS | 300+ FPS |
-| **PyTorch Inference (FP16)** | N/A | 200-280 FPS | 500+ FPS |
-| **Sensor Reading Rate** | 100 Hz | 100 Hz | 100 Hz |
-| **I2C Communication** | 400 kHz | 400 kHz | 400 kHz |
-| **Power Consumption** | 3-8W | 7-15W | 10-25W |
-| **Boot Time** | 20-30s | 45-60s | 40-50s |
-| **Memory Bandwidth** | 17.1 GB/s | 68 GB/s | 102 GB/s |
-| **AI TOPS** | 2.4 | 40 | 67 |
 
 ## Development
 
