@@ -1027,7 +1027,63 @@ furcate-nano start --profile classroom
 furcate-nano start --profile research
 ```
 
-Configuration profiles are stored in:
+Configuration profiles are stored in:a# ============================================================================
+# Furcate Nano Device Configuration
+# Complete configuration template with all available options
+# ============================================================================
+
+# Device identification and basic settings
+device:
+  id: "nano-device-001"
+  name: "Environmental Monitor 1"
+  location:
+    latitude: 40.7128
+    longitude: -74.0060
+    description: "Science Classroom"
+    zone: "classroom-a"
+    building: "STEM Building"
+    floor: 2
+    room: "Room 205"
+  
+  # Educational mode settings
+  educational_mode: false                    # Enable educational features
+  safety_restrictions: false                # Enable safety restrictions for students
+  student_access_level: "read_only"         # read_only, limited, full
+  
+  # Device metadata
+  firmware_version: "1.0.0"
+  hardware_revision: "v2.1"
+  deployment_date: "2025-06-19"
+  maintenance_contact: "admin@school.edu"
+
+# Hardware configuration
+hardware:
+  simulation: false                          # Use real hardware sensors
+  platform: "raspberry_pi"                  # raspberry_pi, arduino, custom
+  
+  sensors:
+    temperature_humidity:
+      type: "DHT22"                         # DHT22, SHT30, BME280
+      pin: 4                                # GPIO pin number
+      enabled: true
+      polling_interval: 30                  # Seconds between readings
+      calibration:
+        temperature_offset: 0.0             # Temperature calibration offset
+        humidity_offset: 0.0                # Humidity calibration offset
+      thresholds:
+        temperature: [-10, 50]              # Min/max temperature (°C)
+        humidity: [0, 100]                  # Min/max humidity (%)
+    
+    air_quality:
+      type: "SDS011"                        # SDS011, PMS5003, BME680
+      port: "/dev/ttyUSB0"                  # Serial port
+      enabled: true
+      polling_interval: 60                  # Seconds between readings
+      calibration:
+        pm25_factor: 1.0                    # PM2.5 calibration factor
+        pm10_factor: 1.0                    # PM10 calibration factor
+      thresholds:
+        pm25: [0, 75]
 - `configs/development.yaml`
 - `configs/production.yaml`
 - `configs/classroom.yaml`
