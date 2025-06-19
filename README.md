@@ -490,8 +490,6 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 ### Community Support
 - **GitHub Discussions**: [Community Forum](https://github.com/praecise/furcate-nano/discussions)
 - **Issues**: [Bug Reports & Feature Requests](https://github.com/praecise/furcate-nano/issues)
-- **Educational Support**: [education@praecise.com](mailto:education@praecise.com)
-- **Research Collaboration**: [research@praecise.com](mailto:research@praecise.com)
 
 ### Commercial Support
 - **Production Deployments**: [Furcate Platform](https://furcate.earth)
