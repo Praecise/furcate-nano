@@ -1,283 +1,362 @@
 # Furcate Nano
 
-**Open Source Environmental Edge Computing Framework**
+Open Source Environmental Edge Computing Framework for Research and Education
 
-Transform Raspberry Pi 5 into intelligent environmental monitoring nodes with bio-inspired mesh networking.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Platform](https://img.shields.io/badge/platform-ARM64%20%7C%20x86__64-lightgrey.svg)]()
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Raspberry Pi](https://img.shields.io/badge/platform-Raspberry%20Pi%205-red.svg)](https://www.raspberrypi.org/)
+## Overview
 
-## What is Furcate Nano?
+Furcate Nano is the educational and research version of Furcate's distributed environmental intelligence platform. Transform embedded devices like Raspberry Pi and NVIDIA Jetson Nano into intelligent environmental monitoring nodes capable of:
 
-Furcate Nano is an open-source framework that transforms Raspberry Pi 5 devices into intelligent environmental monitoring nodes. It enables the creation of self-organizing mesh networks for monitoring air quality, soil conditions, weather patterns, and ecosystem health.
+- **Real-time Environmental Monitoring**: Temperature, humidity, air quality, and more
+- **Edge AI and Machine Learning**: On-device intelligence for environmental analysis
+- **Mesh Networking**: Self-organizing device networks for collaborative monitoring
+- **Educational Integration**: Classroom-ready with curriculum alignment
+- **Research Applications**: Flexible framework for environmental research
 
-**Key Features:**
-- Edge AI with real-time environmental analysis using TensorFlow Lite
-- Bio-inspired mesh networking with self-healing topology
-- Multi-network integration (local P2P + global cloud synchronization)
-- Solar-powered autonomous operation
-- Multi-database storage (DuckDB + RocksDB + SQLite)
+**For production environmental monitoring in vulnerable communities, see the commercial [Furcate platform](https://furcate.earth)**
 
 ## Quick Start
 
-### Installation
+### Hardware Requirements
+
+**Minimum Requirements:**
+- **Raspberry Pi 4B** (4GB RAM) or **NVIDIA Jetson Nano** (4GB)
+- **MicroSD Card**: 32GB+ (Class 10)
+- **Power Supply**: Official power adapter
+- **Network**: WiFi or Ethernet connectivity
+
+**Recommended Hardware:**
+- **Raspberry Pi 5** (8GB RAM) or **NVIDIA Jetson Orin Nano**
+- **Environmental Sensors**: DHT22, BME280, SDS011, etc.
+- **LoRa Module**: For long-range mesh networking
+- **Solar Panel + Battery**: For remote deployment
+
+### Software Installation
+
+#### 1. System Preparation
+
+```bash
+# Update system packages
+sudo apt update && sudo apt upgrade -y
+
+# Install Python 3.8+ and dependencies
+sudo apt install python3 python3-pip python3-venv git -y
+
+# Create virtual environment
+python3 -m venv furcate-nano-env
+source furcate-nano-env/bin/activate
+```
+
+#### 2. Install Furcate Nano
+
 ```bash
 # Clone repository
 git clone https://github.com/praecise/furcate-nano.git
 cd furcate-nano
 
-# Install with hardware support
-pip install -e ".[hardware,ml,storage]"
+# Install core package
+pip install -e .
 
-# Test installation
-python3 test_furcate_nano.py
+# Install platform-specific dependencies
+# For Raspberry Pi:
+pip install -r requirements-raspberry-pi.txt
+
+# For NVIDIA Jetson:
+pip install -r requirements-jetson.txt
+
+# For educational environments:
+pip install -r requirements-educational.txt
 ```
 
-### Start Monitoring
+#### 3. Initial Configuration
+
 ```bash
 # Generate default configuration
-furcate-nano init --output my-config.yaml
+furcate-nano init --device-type raspberry_pi
 
-# Start environmental monitoring
-furcate-nano start --config my-config.yaml
+# Start with simulation mode (no hardware required)
+furcate-nano start --simulation
+
+# View dashboard at http://localhost:8080
 ```
 
-## Hardware Requirements
+## Features
 
-### Basic Kit (~$250-300)
-| Component | Est. Cost | Purpose |
-|-----------|-----------|---------|
-| Raspberry Pi 5 (4GB) | $60 | Main computing unit |
-| MicroSD Card (64GB) | $15 | Operating system + data |
-| DHT22 Temperature/Humidity | $8-15 | Climate monitoring |
-| BMP280 Pressure Sensor | $3-8 | Atmospheric pressure |
-| MQ135 Air Quality Sensor | $5-12 | Gas detection (CO2, NH3, NOx) |
-| Soil Moisture Sensor | $5-8 | Soil hydration levels |
-| LoRa SX1276 Module | $15-25 | Long-range mesh networking |
-| Solar Panel (20W) + Battery | $50-75 | Renewable power system |
-| Weatherproof Enclosure | $20-35 | Environmental protection |
-| Cables & Connectors | $15-25 | Assembly hardware |
+### Core Capabilities
 
-**Note:** Raspberry Pi 5 8GB variant costs $80 and 16GB variant costs $120 for higher-performance applications.
+- **Environmental Monitoring**: Multi-sensor data collection with automatic calibration
+- **Edge Machine Learning**: TensorFlow Lite and PyTorch models for environmental analysis
+- **Mesh Networking**: LoRa, Bluetooth, and WiFi-based device collaboration
+- **Power Management**: Solar charging and intelligent power optimization
+- **Data Storage**: Local SQLite with cloud synchronization options
+- **Protocol Support**: MQTT, HTTP, and custom Furcate protocols
 
-### Supported Sensors
+### Educational Features
 
-**Environmental Sensors:**
-- **Temperature/Humidity**: DHT22, SHT30, AM2320
-- **Atmospheric Pressure**: BMP280, BME680
-- **Air Quality**: MQ135, MQ7, SGP30, CCS811
-- **Soil Monitoring**: Capacitive moisture sensors, pH sensors
-- **Light**: TSL2561, BH1750
-- **Sound**: MEMS microphones
+- **Classroom Integration**: Ready-made lesson plans and experiments
+- **Real-time Dashboards**: Interactive visualization for learning
+- **Student Projects**: Structured environmental monitoring projects
+- **NGSS Alignment**: Supports Next Generation Science Standards
+- **Safety Features**: Educational mode with restricted permissions
 
-**Networking Hardware:**
-- **LoRa**: SX1276, SX1262, RFM95W modules
-- **WiFi**: Built-in Raspberry Pi 5 WiFi
-- **Bluetooth**: Built-in Pi 5 Bluetooth
-- **Cellular**: USB 4G/5G modems
+### Research Applications
 
-## Architecture
+- **Distributed Sensing**: Large-scale environmental monitoring networks
+- **Custom ML Models**: Framework for developing environmental AI
+- **Data Collection**: High-quality datasets for research
+- **Blockchain Integration**: Immutable environmental data records
+- **API Access**: Comprehensive REST and GraphQL APIs
 
-### System Components
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    FURCATE NANO NODE                            │
-├─────────────────────────────────────────────────────────────────┤
-│  Hardware Layer                                                 │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐            │
-│  │   Sensors    │ │   LoRa/WiFi  │ │ Solar+Battery│            │
-│  │ DHT22,BMP280 │ │   Bluetooth  │ │   Management │            │
-│  │ MQ135,Soil   │ │   Cellular   │ │   + Charging │            │
-│  └──────────────┘ └──────────────┘ └──────────────┘            │
-├─────────────────────────────────────────────────────────────────┤
-│  Edge Computing Layer                                           │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐            │
-│  │ Sensor Fusion│ │   Edge ML    │ │ Data Storage │            │
-│  │ Multi-sensor │ │ TensorFlow   │ │ DuckDB+Rocks │            │
-│  │  Validation  │ │ Lite Models  │ │  DB+SQLite   │            │
-│  └──────────────┘ └──────────────┘ └──────────────┘            │
-├─────────────────────────────────────────────────────────────────┤
-│  Networking Layer                                               │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐            │
-│  │  Mesh Network│ │ Tenzro P2P   │ │Web Integration│           │
-│  │ Bio-inspired │ │Multi-Cloud   │ │REST/MQTT/WS  │            │
-│  │ Self-healing │ │ Global Sync  │ │   Webhooks   │            │
-│  └──────────────┘ └──────────────┘ └──────────────┘            │
-└─────────────────────────────────────────────────────────────────┘
-```
+## Tutorials
 
-## AI & Machine Learning
+Comprehensive tutorials are available in the `/docs/tutorials/` directory:
 
-### Edge AI Capabilities
-- **Environmental Classification**: Normal, moderate, polluted, extreme conditions
-- **Anomaly Detection**: Statistical and ML-based outlier identification
-- **Collaborative Learning**: Peer-to-peer model sharing and validation
-- **Real-time Inference**: Sub-second processing on Raspberry Pi 5
+1. **[Classroom Setup](docs/tutorials/classroom.md)**: Complete guide for educational environments
+2. **[Custom ML Models](docs/tutorials/custom_ml_models.md)**: Develop environmental AI models
+3. **[Multi-device Collaboration](docs/tutorials/multi_device_collaboration.md)**: Mesh networking and data sharing
+4. **[Advanced Weather AI](docs/tutorials/advanced_weather_ai.md)**: Integration with global weather models
+5. **[Blockchain Integration](docs/tutorials/blockchain_integration.md)**: Secure, verifiable environmental data
 
-### Supported Models
-- **TensorFlow Lite**: Optimized for Raspberry Pi 5's quad-core ARM Cortex-A76 processor @ 2.4GHz
-- **Environmental Classifier**: Multi-class environmental condition detection
-- **Anomaly Detector**: Unsupervised outlier detection
+## Configuration
 
-## Networking Protocols
+### Basic Configuration
 
-### 1. Bio-Inspired Mesh Network
-- Self-healing topology that adapts to node failures
-- Organic growth patterns based on mycelial network principles
-- Environmental zone clustering for relevant data sharing
-
-### 2. Tenzro Network (Global P2P)
-- Multi-cloud integration: GCP, AWS, Azure, Tenzro Cloud
-- Encrypted P2P channels with PBKDF2 key derivation
-- Global data synchronization with local peer discovery
-
-### 3. Furcate Network (Local P2P)
-- **WiFi Direct**: High-bandwidth device-to-device communication
-- **Bluetooth LE**: Low-power proximity networking
-- **LoRa Mesh**: Long-range, low-power networking (1-10km)
-- **UDP Multicast**: Local network auto-discovery
-
-### 4. Web Integrations
-- **REST API**: Full-featured HTTP API with FastAPI
-- **MQTT**: IoT platform integration
-- **WebSockets**: Real-time data streaming
-- **Webhooks**: External system notifications
-
-## Power Management
-
-### Solar-Powered Operation
-- Intelligent power modes: Normal → Balanced → Low-Power → Emergency
-- Optimized for Raspberry Pi 5's improved power efficiency
-- CPU frequency scaling for power optimization
-- 24/7 autonomous operation capability
-
-## Configuration Examples
-
-### Agricultural Monitoring
 ```yaml
-# configs/agriculture.yaml
+# config.yaml
 device:
-  environmental_zone: "agricultural"
-  
+  id: "classroom-device-1"
+  name: "Environmental Monitor 1"
+  location:
+    latitude: 40.7128
+    longitude: -74.0060
+    description: "Science Classroom"
+
 hardware:
+  simulation: false  # Set to true for development
   sensors:
-    soil_moisture:
+    temperature_humidity:
+      type: "DHT22"
+      pin: 4
       enabled: true
-      measurement_depth_cm: 20
-    soil_ph:
+    air_quality:
+      type: "SDS011"
+      port: "/dev/ttyUSB0"
       enabled: true
-      
+
+ml:
+  simulation: false
+  models:
+    environmental_classifier:
+      enabled: true
+      model_path: "models/environmental_classifier.tflite"
+
 monitoring:
-  interval_seconds: 900  # 15 minutes
+  interval_seconds: 60
   alert_thresholds:
-    soil_moisture:
-      moisture: [40, 80]  # Irrigation thresholds
+    temperature: [-10, 50]
+    humidity: [0, 100]
+    air_quality: [0, 200]
 ```
 
-### Urban Air Quality
+### Educational Configuration
+
 ```yaml
-# configs/urban.yaml
+# classroom-config.yaml
 device:
-  environmental_zone: "urban_center"
-  
-hardware:
-  sensors:
-    air_quality:
-      enabled: true
-    particulate_matter:
-      enabled: true
-    sound_level:
-      enabled: true
-      
-monitoring:
-  interval_seconds: 180  # 3 minutes
-  alert_thresholds:
-    air_quality:
-      aqi: [0, 150]
+  educational_mode: true
+  safety_restrictions: true
+
+integrations:
+  classroom_dashboard:
+    enabled: true
+    url: "https://dashboard.school.edu"
+  google_classroom:
+    enabled: true
+    course_id: "12345"
+
+mesh:
+  educational_collaboration:
+    experiment_sharing: true
+    data_comparison: true
+    peer_validation: true
+```
+
+## API Reference
+
+### REST API
+
+```python
+# Start monitoring
+POST /api/v1/monitoring/start
+
+# Get sensor data
+GET /api/v1/sensors/data?device_id=classroom-1&start=2024-01-01
+
+# Environmental alerts
+GET /api/v1/alerts?severity=warning
+
+# ML predictions
+POST /api/v1/ml/predict
+{
+  "sensor_data": {
+    "temperature": 23.5,
+    "humidity": 45.0,
+    "air_quality": 75
+  }
+}
+```
+
+### Python SDK
+
+```python
+from furcate_nano import FurcateNanoCore, NanoConfig
+
+# Initialize device
+config = NanoConfig.from_file("config.yaml")
+device = FurcateNanoCore(config)
+
+# Start monitoring
+await device.start()
+
+# Get sensor readings
+readings = await device.hardware.read_sensors()
+print(f"Temperature: {readings['temperature']}°C")
+
+# Run ML inference
+results = await device.ml.analyze(readings)
+print(f"Environment classification: {results['classification']}")
 ```
 
 ## Development
 
+### Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
 ### Development Setup
+
 ```bash
-# Clone repository
+# Clone with development extras
 git clone https://github.com/praecise/furcate-nano.git
 cd furcate-nano
 
-# Create development environment
-python3 -m venv furcate-dev
-source furcate-dev/bin/activate
-
 # Install development dependencies
-pip install -e ".[dev,full]"
+pip install -e ".[dev]"
 
-# Run test suite
-pytest tests/
-python3 test_furcate_nano.py
+# Run tests
+python -m pytest tests/
+
+# Run linting
+flake8 furcate_nano/
+black furcate_nano/
 ```
 
-### Adding Custom Sensors
-```python
-# furcate_nano/sensors/custom_sensor.py
-from furcate_nano.hardware import SensorReading, SensorType
-
-class CustomSensor:
-    def __init__(self, config):
-        self.config = config
-    
-    async def read(self) -> SensorReading:
-        # Your sensor reading logic
-        value = await self.read_custom_hardware()
-        
-        return SensorReading(
-            sensor_type=SensorType.CUSTOM,
-            timestamp=time.time(),
-            value={"measurement": value},
-            unit="custom_unit",
-            quality=0.95,
-            confidence=0.90
-        )
-```
-
-## Documentation & Support
-
-### Documentation
-The codebase includes comprehensive inline documentation and configuration examples in the `configs/` directory.
-
-### Community & Support
-- **GitHub Issues**: [Report bugs and request features](https://github.com/praecise/furcate-nano/issues)
-- **Discussions**: [Community discussions and Q&A](https://github.com/praecise/furcate-nano/discussions)
-
-### Contributing
-We welcome contributions! Check the repository for contribution guidelines.
+### Testing
 
 ```bash
-# Fork the repository
-# Create feature branch
-git checkout -b feature/amazing-feature
+# Unit tests
+python -m pytest tests/unit/
 
-# Make changes and test
-python3 test_furcate_nano.py
-pytest tests/
+# Integration tests (requires hardware or simulation)
+python -m pytest tests/integration/
 
-# Submit pull request
+# Educational tests
+python -m pytest tests/educational/
 ```
 
+## Deployment
 
+### Single Device
 
-## License & Commercial Use
+```bash
+# Production deployment
+furcate-nano deploy --config production-config.yaml --service
 
-**Open Source License**: MIT License for research, education, and non-commercial use.
+# Educational deployment
+furcate-nano deploy --config classroom-config.yaml --educational
+```
 
-**Commercial Licensing**: 
-- **Open Source**: Free for research, education, and non-commercial use under MIT License
-- **Commercial**: Contact repository maintainers for commercial licensing inquiries
+### Classroom Network
 
-## Contact & Links
+```bash
+# Deploy classroom network (6 devices)
+./scripts/deploy_classroom_network.sh
 
-- **Repository**: [https://github.com/praecise/furcate-nano](https://github.com/praecise/furcate-nano)
+# Monitor classroom status
+furcate-nano classroom status
+
+# Update all classroom devices
+furcate-nano classroom update
+```
+
+### Research Network
+
+```bash
+# Large-scale research deployment
+furcate-nano research deploy --nodes 50 --region us-west
+
+# Data synchronization
+furcate-nano research sync --target research-cluster
+```
+
+## Supported Platforms
+
+### Embedded Hardware
+
+- **Raspberry Pi**: 4B, 5, Zero 2W (ARM64)
+- **NVIDIA Jetson**: Nano, Xavier NX, Orin Nano
+- **x86 Systems**: Intel NUC, mini PCs
+- **Orange Pi**: 5, 5 Plus (experimental)
+
+### Operating Systems
+
+- **Raspberry Pi OS**: 64-bit (recommended)
+- **Ubuntu**: 20.04+ LTS (ARM64/x86_64)
+- **Debian**: 11+ (ARM64/x86_64)
+- **NVIDIA JetPack**: 5.0+ (Jetson devices)
+
+### Python Versions
+
+- **Python**: 3.8, 3.9, 3.10, 3.11
+- **Dependencies**: See requirements files for platform-specific versions
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+### Documentation
+
+- **Tutorials**: Complete guides in `/docs/tutorials/`
+- **API Reference**: `/docs/api/`
+- **Configuration**: `/docs/configuration/`
+- **Hardware Guides**: `/docs/hardware/`
+
+### Community
+
+- **GitHub Issues**: [Report bugs and feature requests](https://github.com/praecise/furcate-nano/issues)
+- **Discussions**: [Community forum](https://github.com/praecise/furcate-nano/discussions)
+- **Educational Support**: [Contact Praecise Education](mailto:education@praecise.com)
+
+### Commercial Support
+
+For production environmental monitoring solutions, visit [Furcate.earth](https://furcate.earth) or contact [Praecise Ltd](https://praecise.com).
+
+## Acknowledgments
+
+Furcate Nano is developed by [Praecise Ltd](https://praecise.com) as part of the Furcate environmental intelligence ecosystem. This open-source version is designed specifically for educational and research use.
+
+**Special thanks to:**
+- Educational partners for classroom testing
+- Research institutions for environmental data validation
+- Open source community for contributions
+- Environmental scientists for domain expertise
 
 ---
 
-*Built by the Furcate community. Democratizing environmental monitoring, one node at a time.*
+**Transform embedded devices into environmental intelligence. Start monitoring today.**

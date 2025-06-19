@@ -1,531 +1,507 @@
-# ============================================================================
-# pyproject.toml - Modern Python packaging for Furcate Nano
-# ============================================================================
+# Contributing to Furcate Nano
 
-[build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+Thank you for your interest in contributing to Furcate Nano! This open-source environmental edge computing framework benefits from community contributions in code, documentation, testing, and educational resources.
 
-[project]
-name = "furcate-nano"
-version = "1.0.0"
-description = "Open Source Environmental Edge Computing Framework"
-readme = "README.md"
-license = {text = "MIT"}
-authors = [
-    {name = "Furcate Team", email = "opensource@furcate.earth"}
-]
-maintainers = [
-    {name = "Furcate Team", email = "opensource@furcate.earth"}
-]
-keywords = [
-    "environmental-monitoring", 
-    "edge-computing", 
-    "raspberry-pi", 
-    "mesh-networking",
-    "machine-learning",
-    "iot",
-    "environmental-ai"
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Science/Research",
-    "Intended Audience :: Developers",
-    "Topic :: Scientific/Engineering :: Environmental Science",
-    "Topic :: System :: Hardware",
-    "Topic :: System :: Networking",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Operating System :: POSIX :: Linux",
-    "Environment :: No Input/Output (Daemon)"
-]
-requires-python = ">=3.8"
-dependencies = [
-    "pydantic>=1.8.0",
-    "pyyaml>=6.0",
-    "asyncio-mqtt>=0.11.0",
-    "aiofiles>=0.8.0",
-    "click>=8.0.0",
-    "rich>=12.0.0",
-    "psutil>=5.8.0",
-    "numpy>=1.21.0,<1.24.0",
-    "aiohttp>=3.8.0",
-    "websockets>=10.0"
-]
+## Table of Contents
 
-[project.optional-dependencies]
-hardware = [
-    "RPi.GPIO>=0.7.0",
-    "gpiozero>=1.6.0", 
-    "adafruit-circuitpython-dht>=3.7.0",
-    "adafruit-circuitpython-bmp280>=3.2.0",
-    "adafruit-circuitpython-ads1x15>=2.2.0",
-    "pyserial>=3.5",
-    "paho-mqtt>=1.6.0",
-    "bleak>=0.19.0"
-]
-ml = [
-    "tensorflow-lite>=2.10.0",
-    "scikit-learn>=1.0.0"
-]
-storage = [
-    "duckdb>=0.8.0",
-    "python-rocksdb>=0.8.0"
-]
-dev = [
-    "pytest>=6.0",
-    "pytest-asyncio>=0.18.0",
-    "pytest-cov>=3.0.0",
-    "black>=22.0",
-    "flake8>=4.0",
-    "mypy>=0.950",
-    "pre-commit>=2.15.0"
-]
-full = [
-    "furcate-nano[hardware,ml,storage]"
-]
+- [Code of Conduct](#code-of-conduct)
+- [Getting Started](#getting-started)
+- [Development Setup](#development-setup)
+- [Contributing Guidelines](#contributing-guidelines)
+- [Testing](#testing)
+- [Documentation](#documentation)
+- [Submitting Changes](#submitting-changes)
+- [Community](#community)
 
-[project.urls]
-Homepage = "https://github.com/furcate-team/furcate-nano"
-Documentation = "https://docs.furcate-nano.org"
-Repository = "https://github.com/furcate-team/furcate-nano"
-Issues = "https://github.com/furcate-team/furcate-nano/issues"
-Changelog = "https://github.com/furcate-team/furcate-nano/blob/main/CHANGELOG.md"
-Community = "https://discord.gg/furcate-nano"
+## Code of Conduct
 
-[project.scripts]
-furcate-nano = "furcate_nano.cli:main"
+This project adheres to a code of conduct that fosters an inclusive, respectful environment for all contributors. By participating, you agree to uphold these standards:
 
-[tool.setuptools.packages.find]
-include = ["furcate_nano*"]
+- **Be respectful**: Treat all contributors with respect and professionalism
+- **Be inclusive**: Welcome contributors from all backgrounds and experience levels
+- **Be collaborative**: Work together constructively and help others learn
+- **Be professional**: Focus on technical merit and constructive feedback
+- **Be educational**: Remember this project serves educational purposes
 
-[tool.setuptools.package-data]
-furcate_nano = ["configs/*.yaml", "models/*.tflite", "scripts/*.sh"]
+Report any unacceptable behavior to [opensource@praecise.com](mailto:opensource@praecise.com).
 
-[tool.black]
-line-length = 100
-target-version = ['py38', 'py39', 'py310', 'py311']
-include = '\.pyi?$'
-extend-exclude = '''
-/(
-  # directories
-  \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | build
-  | dist
-)/
-'''
-
-[tool.mypy]
-python_version = "3.8"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-ra -q --strict-markers"
-testpaths = ["tests"]
-asyncio_mode = "auto"
-
-# ============================================================================
-# Makefile - Development and deployment commands
-# ============================================================================
-
-.PHONY: help install test lint format clean build deploy setup-pi
-
-help:
-	@echo "🌿 Furcate Nano Development Commands:"
-	@echo "  install     - Install development dependencies"
-	@echo "  test        - Run unit tests"
-	@echo "  lint        - Run code linting"
-	@echo "  format      - Format code with black"
-	@echo "  clean       - Clean build artifacts"
-	@echo "  build       - Build distribution packages"
-	@echo "  setup-pi    - Setup Raspberry Pi for deployment"
-	@echo "  deploy      - Deploy to Raspberry Pi"
-
-install:
-	pip install -e .[dev,ml,full]
-	pre-commit install
-
-test:
-	pytest tests/ -v --cov=furcate_nano --cov-report=html
-
-test-fast:
-	pytest tests/ -v -x --ff
-
-lint:
-	flake8 furcate_nano tests
-	mypy furcate_nano
-
-format:
-	black furcate_nano tests
-	isort furcate_nano tests
-
-clean:
-	rm -rf build/
-	rm -rf dist/
-	rm -rf *.egg-info/
-	rm -rf .pytest_cache/
-	rm -rf htmlcov/
-	find . -type d -name __pycache__ -delete
-	find . -type f -name "*.pyc" -delete
-
-build: clean
-	python -m build
-
-# Raspberry Pi deployment targets
-setup-pi:
-	@echo "Setting up Raspberry Pi 5 for Furcate Nano..."
-	curl -sSL https://raw.githubusercontent.com/furcate-team/furcate-nano/main/scripts/setup-raspberry-pi.sh | bash
-
-deploy:
-	@echo "Deploying Furcate Nano to Raspberry Pi..."
-	@read -p "Enter Pi IP address: " PI_IP && \
-	scp -r . pi@$$PI_IP:/tmp/furcate-nano && \
-	ssh pi@$$PI_IP "cd /tmp/furcate-nano && sudo python setup.py install"
-
-# Docker targets
-docker-build:
-	docker build -t furcate-nano:latest .
-
-docker-run:
-	docker run --rm -it -p 8080:8080 furcate-nano:latest
-
-docker-compose-up:
-	docker-compose -f docker/docker-compose.yml up
-
-docker-compose-down:
-	docker-compose -f docker/docker-compose.yml down
-
-# Development utilities
-dev-server:
-	furcate-nano start --config configs/development.yaml --verbose
-
-simulate:
-	furcate-nano start --config configs/simulation.yaml --daemon
-
-monitor:
-	tail -f /data/furcate-nano/logs/furcate-nano.log
-
-# Release targets
-tag-version:
-	@echo "Current version: $$(grep __version__ furcate_nano/__init__.py)"
-	@read -p "Enter new version: " VERSION && \
-	sed -i "s/__version__ = \".*\"/__version__ = \"$$VERSION\"/" furcate_nano/__init__.py && \
-	git add furcate_nano/__init__.py && \
-	git commit -m "Bump version to $$VERSION" && \
-	git tag "v$$VERSION"
-
-release: clean build
-	twine upload dist/*
-
-# ============================================================================
-# CONTRIBUTING.md - Contribution guidelines
-# ============================================================================
-
-# Contributing to Furcate Nano 🌿
-
-Thank you for your interest in contributing to Furcate Nano! This document provides guidelines for contributing to our open-source environmental monitoring framework.
-
-## 🎯 Project Vision
-
-Furcate Nano democratizes environmental monitoring by making it affordable and accessible. We're building the foundation for a planetary-scale environmental intelligence network.
-
-## 🛠️ Development Setup
+## Getting Started
 
 ### Prerequisites
-- Python 3.8+
-- Raspberry Pi 5 (for hardware testing)
-- Git
 
-### Local Development
+- **Python**: 3.8 or higher
+- **Git**: Version control system
+- **Hardware**: Raspberry Pi 4+ or NVIDIA Jetson (optional for simulation)
+- **Experience**: Basic Python programming and environmental science concepts
+
+### Types of Contributions
+
+We welcome various types of contributions:
+
+1. **Bug Reports**: Help identify and fix issues
+2. **Feature Requests**: Suggest new capabilities
+3. **Code Contributions**: Implement features and fixes
+4. **Documentation**: Improve guides and tutorials
+5. **Educational Content**: Create lesson plans and experiments
+6. **Testing**: Expand test coverage and validation
+7. **Hardware Support**: Add support for new sensors and devices
+
+## Development Setup
+
+### 1. Fork and Clone Repository
+
 ```bash
-# Clone the repository
-git clone https://github.com/furcate-team/furcate-nano.git
+# Fork the repository on GitHub, then clone your fork
+git clone https://github.com/YOUR_USERNAME/furcate-nano.git
 cd furcate-nano
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Add upstream remote
+git remote add upstream https://github.com/praecise/furcate-nano.git
+```
 
-# Install in development mode
-pip install -e .[dev,ml,full]
+### 2. Set Up Development Environment
+
+```bash
+# Create virtual environment
+python3 -m venv furcate-dev
+source furcate-dev/bin/activate  # On Windows: furcate-dev\Scripts\activate
+
+# Install development dependencies
+pip install --upgrade pip
+pip install -e ".[dev]"
 
 # Install pre-commit hooks
 pre-commit install
-
-# Run tests
-make test
 ```
 
-### Docker Development
-```bash
-# Build development container
-make docker-build
-
-# Run development environment
-make docker-compose-up
-```
-
-## 🧪 Testing
-
-We maintain high test coverage and quality standards:
+### 3. Verify Installation
 
 ```bash
-# Run all tests
-make test
+# Run basic tests
+python -m pytest tests/unit/ -v
 
-# Run fast tests only
-make test-fast
+# Start in simulation mode
+furcate-nano start --simulation --debug
 
-# Run specific test file
-pytest tests/test_hardware.py -v
-
-# Run tests with coverage
-pytest tests/ --cov=furcate_nano --cov-report=html
+# Verify development setup
+python -c "import furcate_nano; print(f'Furcate Nano v{furcate_nano.__version__} ready for development')"
 ```
 
-## 📝 Code Style
+### 4. Development Dependencies
 
-We use automated code formatting and linting:
+The development environment includes:
+
+```
+# Core development tools
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.0.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+pre-commit>=3.0.0
+
+# Documentation tools
+sphinx>=6.0.0
+sphinx-rtd-theme>=1.2.0
+myst-parser>=1.0.0
+
+# Educational testing
+jupyter>=1.0.0
+matplotlib>=3.7.0
+pandas>=2.0.0
+```
+
+## Contributing Guidelines
+
+### Code Style
+
+We follow Python PEP 8 with some project-specific conventions:
+
+```python
+# Use clear, descriptive variable names
+sensor_reading = await hardware.read_temperature()
+
+# Type hints for all public functions
+async def process_sensor_data(data: Dict[str, float]) -> SensorReading:
+    """Process raw sensor data into structured readings."""
+    pass
+
+# Educational code should be especially clear
+class EnvironmentalMonitor:
+    """
+    Simple environmental monitoring class for educational use.
+    
+    This class demonstrates basic environmental data collection
+    suitable for high school and undergraduate education.
+    """
+```
+
+### Code Formatting
+
+Use automated formatting tools:
 
 ```bash
 # Format code
-make format
+black furcate_nano/ tests/
 
-# Run linting
-make lint
+# Check code style
+flake8 furcate_nano/ tests/
 
-# Check types
-mypy furcate_nano
+# Type checking
+mypy furcate_nano/
 ```
 
-### Style Guidelines
-- **Python**: Follow PEP 8, use Black for formatting
-- **Documentation**: Use Google-style docstrings
-- **Commit Messages**: Use conventional commits format
-- **Variable Names**: Descriptive names, avoid abbreviations
+### Commit Messages
 
-## 🏗️ Architecture Guidelines
+Use clear, descriptive commit messages:
 
-### Core Principles
-1. **Modularity**: Each component should be independently testable
-2. **Performance**: Optimize for Raspberry Pi 5 constraints
-3. **Reliability**: Graceful degradation and error handling
-4. **Sustainability**: Power-efficient and solar-friendly
-
-### Component Structure
 ```
-furcate_nano/
-├── hardware/     # Sensor interfaces and GPIO management
-├── edge_ml/      # TensorFlow Lite inference
-├── mesh/         # Bio-inspired networking
-├── power/        # Solar power management
-├── storage/      # DuckDB + RocksDB + SQLite
-└── protocols/    # Communication protocols
+# Good examples
+feat(sensors): Add BME680 air quality sensor support
+fix(classroom): Resolve dashboard WebSocket connection issue
+docs(tutorial): Add advanced weather AI integration guide
+test(hardware): Expand sensor calibration test coverage
+
+# Message format
+<type>(<scope>): <description>
+
+# Types: feat, fix, docs, test, refactor, style, chore
+# Scope: sensors, ml, mesh, classroom, hardware, etc.
 ```
 
-## 🔧 Hardware Contributions
+### Branch Naming
 
-### Sensor Support
-Adding new sensor support:
+Use descriptive branch names:
 
-1. Add sensor type to `hardware.py` enum
-2. Implement sensor interface in hardware manager
-3. Add configuration schema
-4. Write comprehensive tests
-5. Update documentation
+```bash
+# Feature branches
+git checkout -b feature/bme680-sensor-support
+git checkout -b feature/classroom-dashboard-improvements
 
-### Testing on Hardware
-- Use simulation mode for initial development
-- Test on actual Raspberry Pi 5 before submitting
-- Verify power consumption characteristics
-- Test in various environmental conditions
+# Bug fix branches
+git checkout -b fix/mqtt-connection-timeout
+git checkout -b fix/raspberry-pi-hardware-detection
 
-## 🌐 Network Protocol Contributions
+# Documentation branches
+git checkout -b docs/advanced-ml-tutorial
+git checkout -b docs/api-reference-update
+```
 
-### Mesh Networking
-- Follow bio-inspired principles (mycelial networks)
-- Optimize for low power consumption
-- Handle network partitioning gracefully
-- Maintain backward compatibility
+## Testing
 
-### Message Protocols
-- Use binary headers for efficiency
-- Implement compression for large payloads
-- Add checksums for data integrity
-- Support message deduplication
+### Test Categories
 
-## 🤖 Machine Learning Contributions
+#### 1. Unit Tests
 
-### Model Requirements
-- Use TensorFlow Lite format (.tflite)
-- Optimize for Raspberry Pi 5 inference
-- Maximum model size: 50MB
-- Inference time: <1 second per reading
+Test individual components in isolation:
 
-### Model Integration
 ```python
-# Example model integration
-class CustomEnvironmentalClassifier:
-    def __init__(self, model_path: str):
-        self.interpreter = tflite.Interpreter(model_path)
-        self.interpreter.allocate_tensors()
+# tests/unit/test_sensors.py
+import pytest
+from furcate_nano.hardware import HardwareManager
+
+@pytest.mark.asyncio
+async def test_sensor_reading_validation():
+    """Test sensor reading data validation."""
+    manager = HardwareManager(simulation=True)
     
-    async def predict(self, features: np.ndarray) -> Dict[str, float]:
-        # Implementation here
-        pass
+    # Test valid reading
+    reading = await manager.read_temperature()
+    assert reading.value is not None
+    assert reading.sensor_type == "temperature"
+    assert reading.timestamp is not None
+
+@pytest.mark.educational
+async def test_classroom_sensor_setup():
+    """Test classroom-specific sensor configurations."""
+    # Educational test for classroom environments
+    pass
 ```
 
-## 📊 Storage Contributions
+#### 2. Integration Tests
 
-### Database Optimization
-- DuckDB for analytics queries
-- RocksDB for high-frequency writes
-- SQLite for fallback compatibility
-- Implement compression and retention policies
+Test component interactions:
 
-## 🐛 Bug Reports
+```python
+# tests/integration/test_ml_pipeline.py
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_complete_ml_pipeline():
+    """Test end-to-end ML processing pipeline."""
+    config = NanoConfig(simulation=True)
+    core = FurcateNanoCore(config)
+    
+    # Test sensor data -> ML analysis -> results
+    await core.start()
+    readings = await core.hardware.read_sensors()
+    results = await core.ml.analyze(readings)
+    
+    assert results is not None
+    assert "classification" in results
+```
 
-### Before Submitting
-1. Check existing issues
-2. Test with latest version
-3. Reproduce in clean environment
-4. Gather system information
+#### 3. Educational Tests
 
-### Bug Report Template
+Test educational functionality:
+
+```python
+# tests/educational/test_classroom_features.py
+@pytest.mark.educational
+def test_student_dashboard_safety():
+    """Ensure student dashboard has appropriate safety restrictions."""
+    # Test educational safety features
+    pass
+
+@pytest.mark.educational 
+def test_curriculum_alignment():
+    """Test NGSS curriculum alignment features."""
+    # Test educational standards compliance
+    pass
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+python -m pytest
+
+# Run specific test categories
+python -m pytest tests/unit/ -v
+python -m pytest tests/integration/ -v
+python -m pytest tests/educational/ -v
+
+# Run with coverage
+python -m pytest --cov=furcate_nano --cov-report=html
+
+# Run educational tests only
+python -m pytest -m educational
+
+# Run tests requiring hardware
+python -m pytest -m hardware --device=/dev/ttyUSB0
+```
+
+### Test Requirements
+
+- **Unit tests**: Must run in simulation mode without hardware
+- **Integration tests**: Can use simulation or require hardware flag
+- **Educational tests**: Focus on classroom safety and usability
+- **Coverage**: Aim for >80% code coverage
+- **Documentation**: Test all public APIs and educational features
+
+## Documentation
+
+### Documentation Types
+
+#### 1. Code Documentation
+
+```python
+class SensorManager:
+    """
+    Manages environmental sensors for Furcate Nano devices.
+    
+    This class provides a unified interface for reading from various
+    environmental sensors commonly used in educational and research
+    environments.
+    
+    Attributes:
+        sensors: Dictionary of configured sensor instances
+        simulation: Whether to use simulated sensor data
+        
+    Example:
+        >>> manager = SensorManager(simulation=True)
+        >>> reading = await manager.read_temperature()
+        >>> print(f"Temperature: {reading.value}°C")
+    """
+```
+
+#### 2. Tutorials
+
+Create comprehensive, educational tutorials:
+
 ```markdown
-**Environment:**
-- OS: [e.g., Raspberry Pi OS]
-- Python Version: [e.g., 3.9.2]
-- Furcate Nano Version: [e.g., 1.0.0]
-- Hardware: [e.g., Raspberry Pi 5 4GB]
-
-**Description:**
-[Clear description of the bug]
-
-**Steps to Reproduce:**
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-
-**Expected Behavior:**
-[What should happen]
-
-**Actual Behavior:**
-[What actually happens]
-
-**Logs:**
-```
-[Relevant log output]
-```
+# Tutorial Structure
+## Overview
+## Prerequisites  
+## Step-by-Step Instructions
+## Code Examples
+## Educational Objectives
+## Assessment Questions
+## Troubleshooting
+## Next Steps
 ```
 
-## 💡 Feature Requests
+#### 3. API Documentation
 
-### Before Requesting
-- Check if feature aligns with project goals
-- Consider implementation complexity
-- Evaluate impact on performance and power usage
+Document all public APIs:
 
-### Feature Request Template
+```python
+async def read_sensor_data(
+    sensor_type: str,
+    duration_seconds: int = 60,
+    interval_seconds: int = 5
+) -> List[SensorReading]:
+    """
+    Read sensor data over a specified duration.
+    
+    Args:
+        sensor_type: Type of sensor to read ('temperature', 'humidity', etc.)
+        duration_seconds: Total reading duration in seconds
+        interval_seconds: Interval between readings in seconds
+        
+    Returns:
+        List of sensor readings with timestamps and values
+        
+    Raises:
+        SensorNotFoundError: If specified sensor type is not available
+        HardwareError: If sensor hardware communication fails
+        
+    Example:
+        >>> readings = await read_sensor_data('temperature', 300, 10)
+        >>> avg_temp = sum(r.value for r in readings) / len(readings)
+    """
+```
+
+### Building Documentation
+
+```bash
+# Install documentation dependencies
+pip install -e ".[docs]"
+
+# Build documentation
+cd docs/
+make html
+
+# View documentation
+open _build/html/index.html
+```
+
+## Submitting Changes
+
+### 1. Before Submitting
+
+```bash
+# Update your fork
+git fetch upstream
+git checkout main
+git merge upstream/main
+
+# Create feature branch
+git checkout -b feature/your-feature-name
+
+# Make changes and test
+# ... make your changes ...
+
+# Run tests
+python -m pytest
+black furcate_nano/ tests/
+flake8 furcate_nano/ tests/
+```
+
+### 2. Pull Request Process
+
+1. **Create Pull Request**: Open PR against `main` branch
+2. **Fill Template**: Use the PR template to describe changes
+3. **Pass Checks**: Ensure all CI checks pass
+4. **Request Review**: Tag relevant maintainers
+5. **Address Feedback**: Respond to review comments
+6. **Merge**: Maintainer will merge when ready
+
+### 3. Pull Request Template
+
 ```markdown
-**Feature Description:**
-[Clear description of the proposed feature]
+## Description
+Brief description of changes and motivation.
 
-**Use Case:**
-[Why is this feature needed?]
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation update
+- [ ] Educational content
+- [ ] Hardware support
 
-**Implementation Ideas:**
-[Any thoughts on how to implement this]
+## Testing
+- [ ] Unit tests pass
+- [ ] Integration tests pass
+- [ ] Educational tests pass
+- [ ] Manual testing completed
 
-**Alternatives Considered:**
-[Other solutions you've considered]
-```
+## Educational Impact
+- [ ] Safe for classroom use
+- [ ] Includes educational documentation
+- [ ] Aligns with curriculum standards
+- [ ] Tested in educational environment
 
-## 🚀 Pull Request Process
-
-### Before Submitting
-1. **Fork** the repository
-2. **Create** a feature branch from `develop`
-3. **Implement** your changes
-4. **Write** tests for new functionality
-5. **Update** documentation
-6. **Run** the full test suite
-7. **Commit** using conventional commit format
-
-### PR Requirements
-- [ ] Tests pass locally
-- [ ] Code follows style guidelines
+## Checklist
+- [ ] Code follows project style guidelines
+- [ ] Self-review completed
 - [ ] Documentation updated
-- [ ] Change log entry added
-- [ ] PR description explains changes
-- [ ] Linked to relevant issues
+- [ ] Tests added/updated
+- [ ] No breaking changes (or justified)
+```
 
-### Review Process
-1. **Automated checks** must pass
-2. **Code review** by maintainers
-3. **Testing** on target hardware
-4. **Approval** and merge
+## Community
 
-## 📚 Documentation Contributions
+### Communication Channels
 
-### Types of Documentation
-- **API Documentation**: Inline docstrings
-- **User Guides**: Markdown files in `/docs`
-- **Examples**: Working code examples
-- **Tutorials**: Step-by-step guides
+- **GitHub Issues**: Bug reports and feature requests
+- **GitHub Discussions**: General questions and community discussions
+- **Educational Forum**: Teaching and learning discussions
+- **Developer Chat**: Real-time development coordination
 
-### Documentation Standards
-- Use clear, concise language
-- Include practical examples
-- Test all code examples
-- Keep documentation up-to-date
+### Maintainers
 
-## 🏷️ Release Process
+- **Core Team**: Praecise Ltd development team
+- **Educational Lead**: Curriculum and classroom integration
+- **Hardware Lead**: Sensor and device support
+- **ML Lead**: Machine learning and AI features
 
-### Version Numbering
-We follow [Semantic Versioning](https://semver.org/):
-- **Major** (X.0.0): Breaking changes
-- **Minor** (0.X.0): New features, backward compatible
-- **Patch** (0.0.X): Bug fixes
+### Recognition
 
-### Release Checklist
-- [ ] Update version number
-- [ ] Update CHANGELOG.md
-- [ ] Run full test suite
-- [ ] Test on Raspberry Pi 5
-- [ ] Create GitHub release
-- [ ] Publish to PyPI
-- [ ] Update Docker images
+Contributors are recognized through:
 
-## 🎉 Recognition
+- **Contributor List**: Recognition in README and documentation
+- **Educational Impact**: Special recognition for educational contributions
+- **Release Notes**: Acknowledgment in version releases
+- **Community Highlights**: Featured contributions in updates
 
-Contributors are recognized in:
-- **README.md** contributors section
-- **Release notes** for significant contributions
-- **Discord community** contributor role
+## Getting Help
 
-## 📞 Getting Help
+### Resources
 
-- **Discord**: [Join our community](https://discord.gg/furcate-nano)
-- **Issues**: [GitHub Issues](https://github.com/furcate-team/furcate-nano/issues)
-- **Email**: opensource@furcate.earth
+- **Documentation**: Comprehensive guides and tutorials
+- **Examples**: Sample code and configurations
+- **Tests**: Reference implementations
+- **Community**: Active contributor community
 
-## 📄 License
+### Contact
 
-By contributing to Furcate Nano, you agree that your contributions will be licensed under the MIT License.
+- **General Questions**: [GitHub Discussions](https://github.com/praecise/furcate-nano/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/praecise/furcate-nano/issues)
+- **Educational Support**: [education@praecise.com](mailto:education@praecise.com)
+- **Security Issues**: [security@praecise.com](mailto:security@praecise.com)
+
+## Development Roadmap
+
+### Current Priorities
+
+1. **Hardware Expansion**: Support for additional sensor types
+2. **Educational Tools**: Enhanced classroom features
+3. **ML Models**: Improved environmental classification
+4. **Documentation**: Comprehensive tutorial expansion
+5. **Testing**: Expanded test coverage and validation
+
+### Getting Involved
+
+Choose areas that match your interests and expertise:
+
+- **Python Developers**: Core framework and ML features
+- **Educators**: Curriculum alignment and classroom tools
+- **Hardware Engineers**: Sensor integration and optimization
+- **Data Scientists**: Environmental analysis and modeling
+- **Technical Writers**: Documentation and tutorials
+- **Students**: Testing, feedback, and educational content
 
 ---
 
-**Thank you for contributing to the future of environmental monitoring! 🌍**
+**Thank you for contributing to Furcate Nano! Together, we're building the future of environmental education and research.**

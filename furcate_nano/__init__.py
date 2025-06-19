@@ -3,15 +3,17 @@
 """
 Furcate Nano - Open Source Environmental Edge Computing Framework
 
-Transform Raspberry Pi 5 devices into intelligent environmental monitoring nodes
-with bio-inspired mesh networking and edge AI capabilities.
-"""
+The educational and research version of Furcate's distributed environmental 
+intelligence platform. Transform embedded devices into intelligent 
+environmental monitoring nodes.
 
+For production deployments, see: https://furcate.earth
+"""
 __version__ = "1.0.0"
 __author__ = "Furcate Team"
-__email__ = "opensource@furcate.org"
+__email__ = "opensource@furcate.earth"
 __license__ = "MIT"
-__homepage__ = "https://github.com/furcate-team/furcate-nano"
+__homepage__ = "https://github.com/praecise/furcate-nano"
 
 # Core framework imports
 from .core import FurcateNanoCore

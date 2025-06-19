@@ -15,9 +15,12 @@ from .config import load_config, create_default_config
 @click.version_option(version="1.0.0")
 def cli():
     """
-    🌿 Furcate Nano - Open Source Environmental Edge Computing
+    Furcate Nano - Open Source Environmental Edge Computing
     
-    Transform your Raspberry Pi 5 into an intelligent environmental monitoring node.
+    Educational and research platform for distributed environmental intelligence.
+    Transform embedded devices into intelligent monitoring nodes.
+    
+    For production deployments: https://furcate.earth
     """
     pass
 

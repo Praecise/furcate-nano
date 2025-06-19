@@ -24,21 +24,19 @@ logger = logging.getLogger(__name__)
 
 class FurcateNanoCore:
     """
-    Complete Furcate Nano core framework with comprehensive network integration.
+    Open Source Furcate Nano core framework for educational and research use.
     
-    Network Architecture:
-    - Local Mesh: Bio-inspired mesh networking for nearby devices
-    - Furcate Network: Local P2P using WiFi/Bluetooth/LoRa/ESP-NOW
-    - Tenzro Network: Global P2P with multi-cloud integration
-    - Web Integrations: REST API, MQTT, WebSockets, Webhooks
+    This is the educational version of Furcate's distributed environmental 
+    intelligence platform, designed for:
+    - Computer science and environmental engineering education
+    - Research into edge computing and IoT systems
+    - Developer learning and experimentation
     
-    Features:
-    - Multi-protocol sensor fusion and validation
-    - Advanced edge ML with collaborative learning
-    - Intelligent power management with predictive optimization
-    - Multi-database storage (DuckDB, RocksDB, SQLite)
-    - Comprehensive health monitoring and diagnostics
-    - Real-time data sharing and collaboration
+    Supports various embedded platforms including ARM64 SBCs, x86 systems,
+    and microcontrollers for flexible deployment scenarios.
+    
+    For production environmental monitoring in vulnerable communities,
+    see the commercial Furcate platform at https://furcate.earth
     """
     
     def __init__(self, config: NanoConfig):

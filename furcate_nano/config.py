@@ -19,8 +19,8 @@ class DeviceConfig(BaseModel):
     environmental_zone: str = "default"
 
 class HardwareConfig(BaseModel):
-    """Hardware configuration."""
-    platform: str = "raspberry_pi_5"
+    """Hardware configuration for embedded devices."""
+    platform: str = "auto_detect"  # auto_detect, arm64, x86_64, esp32
     simulation: bool = False
     gpio_pins: Dict[str, int] = Field(default_factory=lambda: {
         "dht22_data": 4,
